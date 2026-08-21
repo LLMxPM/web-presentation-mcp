@@ -1,0 +1,26 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "web-presentation-mcp-server"
+version = "0.1.0"
+description = "web-presentation External API v1 的 MCP 适配服务"
+requires-python = ">=3.11"
+dependencies = [
+    "mcp>=1.0.0",
+    "web-presentation-api-client",
+]
+
+[project.scripts]
+wp-mcp = "wp_mcp.server:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/wp_mcp"]
+
+[tool.uv.sources]
+web-presentation-api-client = { workspace = true }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
