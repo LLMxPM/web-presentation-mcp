@@ -42,6 +42,9 @@ def _call(operation: Any) -> str:
                 "code": exc.code,
                 "message": exc.message,
                 "status_code": exc.status_code,
+                "details": exc.details,
+                "request_id": exc.request_id,
+                "retry_after": exc.retry_after,
             })
         ) from exc
 
@@ -54,10 +57,10 @@ def wp_list_workspaces() -> str:
 
 
 @mcp.tool()
-def wp_get_operation_guide() -> str:
-    """读取 Backend 当前发布的 External API v1 操作指南和参数 Schema。"""
+def wp_get_operation_guide(operation_key: str | None = None) -> str:
+    """不传 key 读取轻量索引；传 key 读取精确请求/响应 JSON Schema。"""
 
-    return _call(get_gateway().get_guides)
+    return _call(lambda: get_gateway().get_guides(operation_key))
 
 
 @mcp.tool()
@@ -72,6 +75,39 @@ def wp_list_projects(workspace_id: int | None = None) -> str:
     """查询一个工作空间中的项目；不传参数时使用 WP_WORKSPACE_ID。"""
 
     return _call(lambda: get_gateway().list_projects(workspace_id))
+
+
+@mcp.tool()
+def wp_update_entity(
+    resource_type: Literal["page", "component"],
+    target_id: int,
+    payload: dict[str, Any],
+    idempotency_key: str | None = None,
+) -> str:
+    """更新页面或组件安全元数据；允许字段以 operation Guide 为准。"""
+
+    return _call(lambda: get_gateway().update_entity(resource_type, target_id, payload, idempotency_key))
+
+
+@mcp.tool()
+def wp_get_mutation_job(job_id: str, wait: bool = False, timeout_seconds: float = 60.0) -> str:
+    """查询 Mutation Job，可等待 pending/running 状态收敛。"""
+
+    return _call(lambda: get_gateway().get_mutation_job(job_id, wait, timeout_seconds))
+
+
+@mcp.tool()
+def wp_cancel_mutation_job(job_id: str, idempotency_key: str | None = None) -> str:
+    """取消 Mutation Job；生成或复用的幂等键会在结果中回显。"""
+
+    return _call(lambda: get_gateway().cancel_mutation_job(job_id, idempotency_key))
+
+
+@mcp.tool()
+def wp_retry_mutation_job(job_id: str, idempotency_key: str | None = None) -> str:
+    """为 retryable failed Job 创建新任务，并保留原乐观锁基线。"""
+
+    return _call(lambda: get_gateway().retry_mutation_job(job_id, idempotency_key))
 
 
 @mcp.resource("wp://guides")
