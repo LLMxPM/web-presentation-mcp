@@ -1,6 +1,8 @@
 # web-presentation MCP Server
 
-这是 `web-presentation-agent-kit` 的 MCP 协议适配层。当前只实现只读工具，用于验证传输、认证上下文和 External API v1 契约；写工具和 OAuth 资源服务器验证应在只读链路稳定后按主仓 MCP 规划逐步加入。
+这是 `web-presentation-agent-kit` 的 MCP 协议适配层。当前只实现只读工具，用于验证传输、认证上下文和 External API v1 契约；写工具和 OAuth 资源服务器验证应在只读链路稳定后按本仓实施计划逐步加入。
+
+主仓负责维护 External API v1 的路径、Scope、DTO、错误码、幂等和任务语义，统一见 [External Agent API v1 契约](https://github.com/LLMxPM/web-presentation/blob/main/docs/developer/reference/external-agent-api.md)。本目录只维护 MCP 协议适配、工具/资源注册、传输安全和本仓测试；详细实施计划见 [docs/mcp-implementation-plan.md](../docs/mcp-implementation-plan.md)。
 
 ## 启动
 
