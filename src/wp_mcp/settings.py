@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass(frozen=True)
@@ -11,7 +11,7 @@ class Settings:
     """MCP Server 的最小运行配置。"""
 
     endpoint: str
-    token: str | None
+    token: str | None = field(repr=False)
     workspace_id: int | None
 
     @classmethod
